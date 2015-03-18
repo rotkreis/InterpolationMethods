@@ -9,6 +9,14 @@
 #include <iostream>
 #include <cmath>
 #include "InterpolationMethods.h"
+
+std::function<double (double)> retFun(double n) {
+    return [n](double x) { return x - n; };
+}
+double quad(double x){
+    return x * x;
+}
+
 int main(int argc, const char * argv[])
 {
 // --------- --------- Problem 1.1  --------- ---------
@@ -19,12 +27,19 @@ int main(int argc, const char * argv[])
 //        integral = -5 * integral + 1.0 / i;
 //        std::cout << "I_" << i << ": " << integral <<", and     " << 1.0 / i<< std::endl;
 //    }
+
+// --------- --------- Problem 2.2  --------- ---------
+
     mVector a(3);
     a = {1,2,3};
-
-    
-    
-    
+    std::function<double (double)> foo = Newton(quad, a);
+    for (int i = 1; i <= 10; i++) {
+        std::cout << foo(i) <<std::endl;
+    }
+//    std::function<double (double)> test = retFun(6);
+//    std::cout << test(2) << std::endl;
+//    std::cout << NewtonInterpCoeff(f, a);
+//    std::cout << PolynominalEval(a, 2);
 }
 
 

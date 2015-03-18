@@ -14,6 +14,10 @@
 
 typedef double (*fp)(double);
 
-double NewtonInterpCoeff(fp f, mVector& x);
+double NewtonInterpCoeff(fp f, const mVector& x);
+
+std::function<double (double)> Newton(fp f, const mVector& x);
+
+double PolynominalEval(const mVector& coeffs, double x);
 
 #endif /* defined(__NA_Homework_1__InterpolationMethods__) */

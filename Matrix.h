@@ -137,6 +137,16 @@ public:
     double last(){
         return data[0][mNumRows - 1];
     }
+    double first() const{
+        return data[0][0];
+    }
+    double last() const{
+        return data[0][mNumRows - 1];
+    }
+    double NormInf();
+    double NormInf(int& position);
+    double Norm_2();
+    double Norm_1();
 public:
     TYPE& operator[](int index){
         return data[0][index];
@@ -164,10 +174,10 @@ public:
             data[0][i] = rhs[i];
         }
     }
-    double NormInf();
-    double NormInf(int& position);
-    double Norm_2();
-    double Norm_1();
+public:
+    void droplast(){
+        mNumRows -= 1;
+    }
 };
 mVector operator+(const mVector& m1, const mVector& m2);
 mVector operator-(const mVector& m1, const mVector& m2);
@@ -176,8 +186,20 @@ mVector operator*(const mVector& m1, const TYPE& num);
 mVector operator*(const TYPE& num, const mVector& m1);
 mVector operator/(const mVector& m1, const TYPE& num);
 
-
-
+static mVector DropFirst(const mVector& vec){
+    mVector res(vec.dim() - 1);
+    for (int i = 0; i != res.dim(); i++) {
+        res[i] = vec[i + 1];
+    }
+    return res;
+}
+static mVector DropLast(const mVector& vec){
+    mVector res(vec.dim() - 1);
+    for (int i = 0; i != res.dim(); i++) {
+        res[i] = vec[i];
+    }
+    return res;
+}
 double InnerProduct(mVector& v1, mVector& v2);
 
 
