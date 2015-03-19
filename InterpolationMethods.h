@@ -11,12 +11,16 @@
 
 #include <iostream>
 #include "Matrix.h"
-
 typedef double (*fp)(double);
 
+// Newton
 double NewtonInterpCoeff(fp f, const mVector& x);
 
 std::function<double (double)> Newton(fp f, const mVector& x);
+
+// Linear
+
+std::function<double (double)> Linear(fp f, const mVector& x);
 
 double PolynominalEval(const mVector& coeffs, double x);
 

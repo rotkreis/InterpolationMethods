@@ -14,7 +14,7 @@ std::function<double (double)> retFun(double n) {
     return [n](double x) { return x - n; };
 }
 double quad(double x){
-    return x * x;
+    return 2 * x;
 }
 
 int main(int argc, const char * argv[])
@@ -32,8 +32,10 @@ int main(int argc, const char * argv[])
 
     mVector a(3);
     a = {1,2,3};
-    std::function<double (double)> foo = Newton(quad, a);
-    for (int i = 1; i <= 10; i++) {
+//    std::function<double (double)> foo = Newton(quad, a);
+    std::function<double (double)> foo = Linear(quad, a);
+//    std::cout << foo(2);
+    for (double i = 1; i <= 3; i += 0.5) {
         std::cout << foo(i) <<std::endl;
     }
 //    std::function<double (double)> test = retFun(6);

@@ -8,7 +8,7 @@
 
 #include "InterpolationMethods.h"
 typedef double (*fp)(double);
-
+// Newton
 double NewtonInterpCoeff(fp f, const mVector& x){
     if (x.dim() == 1) {
         return f(x[0]);
@@ -27,13 +27,45 @@ std::function<double (double)> Newton(fp f, const mVector& x){
             for (int j = 0; j <= i - 1; j++) {
                 multiple *= (t - x[j]);
             }
-//            std::cout << i << " " << multiple << " " << NewtonInterpCoeff(f, temp)<<" " <<res <<endl;
             res += NewtonInterpCoeff(f, temp) * multiple;
             temp.droplast();
         }
         return res;
     };
+    //         std::cout << i << " " << multiple << " " << NewtonInterpCoeff(f, temp)<<" " <<res <<endl;
 }
+
+// Linear
+
+std::function<double (double)> Linear(fp f, const mVector& x){
+    return [&, f](double t) {
+        double res = 0;
+        int n = x.dim(); // x0, x1, ...,x(n-2), x(n-1)
+        for (int i = 0; i != n - 1 ; i++) { // Sequence
+            assert(x[i] < x[i + 1]);
+        }
+        if (t >= x[0] && t <= x[1] ) {
+            res += f(x[0]) * ((t - x[1]) / (x[0] - x[1]));
+        }
+        if (n >= 2 && t >= x[n - 2] && t <= x[n - 1] ) {
+            res += f(x[n - 1]) * ((t - x[n - 2]) / (x[n - 1] - x[n - 2]));
+        }
+        for (int i = 1; i <= n - 2; i++) {
+            if (t >= x[i - 1] && t <= x[i]) {
+                res += f(x[i]) * ((t - x[i - 1]) / (x[i] - x[i - 1]));
+            }
+            else {
+                if (t >= x[i] && t <= x[i + 1]) {
+                    res += f(x[i]) * ((t - x[i + 1]) / (x[i] - x[i + 1]));
+                }
+            }
+        }
+        return res;
+    };
+}
+
+
+
 double PolynominalEval(const mVector& coeffs, double x){
     double res = 0;
     for (int i = 0; i != coeffs.dim(); i++) {
