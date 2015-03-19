@@ -30,14 +30,15 @@ int main(int argc, const char * argv[])
 
 // --------- --------- Problem 2.2  --------- ---------
 
-    mVector a(3);
-    a = {1,2,3};
+    mVector a(5);
+    a = {0.25,.5,1,2,3};
 //    std::function<double (double)> foo = Newton(quad, a);
-    std::function<double (double)> foo = Linear(quad, a);
-//    std::cout << foo(2);
+    std::function<double (double)> foo = Hermite(sin,cos, a);
     for (double i = 1; i <= 3; i += 0.5) {
         std::cout << foo(i) <<std::endl;
     }
+    std::cout << foo(3.14 / 2) << std::endl;
+    std::cout << foo(3.14 / 4) << std::endl;
 //    std::function<double (double)> test = retFun(6);
 //    std::cout << test(2) << std::endl;
 //    std::cout << NewtonInterpCoeff(f, a);

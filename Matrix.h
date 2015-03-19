@@ -174,6 +174,7 @@ public:
             data[0][i] = rhs[i];
         }
     }
+
 public:
     void droplast(){
         mNumRows -= 1;
