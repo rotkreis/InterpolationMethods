@@ -34,7 +34,24 @@ std::function<double (double)> Newton(fp f, const mVector& x){
     };
     //         std::cout << i << " " << multiple << " " << NewtonInterpCoeff(f, temp)<<" " <<res <<endl;
 }
-
+// Lagrange
+std::function<double (double)> Lagrange(fp f, const mVector& x){
+    return [&, f](double t) {
+        double res = 0;
+        int n = x.dim();
+        for (int i = 0; i != n; i++) {
+            double multiple = 1;
+            for (int j = 0; j != n; j++) {
+                if (j != i) {
+                    multiple *= (t - x[j]);
+                    multiple /= (x[i] - x[j]);
+                }
+            }
+            res += f(x[i]) * multiple;
+        }
+        return res;
+    };
+}
 // Linear
 std::function<double (double)> Linear(fp f, const mVector& x){
     return [&, f](double t) {
@@ -98,11 +115,69 @@ std::function<double (double)> Hermite(fp y, fp m, const mVector& x){ // y: func
         return res;
     };
 }
+std::function<double (double)> Hermite(fp y, std::function<double (double)> m, const mVector& x){ // y: function value, m: derivative
+    return [&, y, m](double t) {
+        double res = 0;
+        int n = x.dim(); // x0, x1, ...,x(n-2), x(n-1)
+        for (int i = 0; i != n - 1 ; i++) { // Sequence
+            assert(x[i] < x[i + 1]);
+        }
+        if (t >= x[0] && t <= x[1]) {
+            double h = x[1] - x[0];
+            res += y(x[0]) * (1 + 2 * (t - x[0]) / (x[1] - x[0])) * pow(t - x[1], 2) / pow(h, 2);
+            res += m(x[0]) * (t - x[0]) * pow(t - x[1], 2) / pow(h, 2);
+        }
+        if (n >= 2 && t >= x[n - 2] && t <= x[n - 1]) {
+            double h = x[n - 1] - x[n - 2];
+            res += y(x[n - 1]) * (1 + 2 * (t - x[n - 1]) / (x[n - 2] - x[n - 1])) * pow(t - x[n - 2], 2) / pow(h, 2);
+            res += m(x[n - 1]) * (t - x[n - 1]) * pow(t - x[n - 2], 2) / pow(h, 2);
+        }
+        for (int i = 1; i <= n - 2; i++) {
+            if (t >= x[i - 1] && t <= x[i]) {
+                double h = x[i] - x[i - 1];
+                res += y(x[i]) * (1 + 2 * (t - x[i]) / (x[i - 1] - x[i])) * pow(t - x[i - 1], 2) / pow(h, 2);
+                res += m(x[i]) * (t - x[i]) * pow(t - x[i - 1], 2) / pow(h, 2);
+            }
+            else {
+                if (t >= x[i] && t <= x[i + 1]) {
+                    double h = x[i + 1] - x[i];
+                    res += y(x[i]) * (1 + 2 * (t - x[i]) / (x[i + 1] - x[i])) * pow(t - x[i + 1], 2) / pow(h, 2);
+                    res += m(x[i]) * (t - x[i]) * pow(t - x[i + 1], 2) / pow(h, 2);
+                }
+            }
+        }
+        return res;
+    };
+}
 
+// Spline
+std::function<double (double)> Spline(fp f, const mVector& x){
+    mVector c(x.dim());
+    c[0] = 1;
+    for (int i = 1; i != x.dim() - 1; i++) {
+        
+    }
+    std::function<double (double)> m = CustomFunction(x, x);
+    return Hermite(f, m, x);
+}
+
+// Polynomial
 double PolynominalEval(const mVector& coeffs, double x){
     double res = 0;
     for (int i = 0; i != coeffs.dim(); i++) {
         res += coeffs[i] * pow(x, i);
     }
     return res;
+}
+
+// Function yn at xn
+std::function<double (double)> CustomFunction(const mVector& y, const mVector& x){
+    return [&](double t){
+        for (int i = 0; i != x.dim(); i++) {
+            if (t == x[i]) {
+                return x[i];
+            }
+        }
+        return 0.0;
+    };
 }

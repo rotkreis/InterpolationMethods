@@ -33,7 +33,7 @@ int main(int argc, const char * argv[])
     mVector a(5);
     a = {0.25,.5,1,2,3};
 //    std::function<double (double)> foo = Newton(quad, a);
-    std::function<double (double)> foo = Hermite(sin,cos, a);
+    std::function<double (double)> foo = Lagrange(sin, a);
     for (double i = 1; i <= 3; i += 0.5) {
         std::cout << foo(i) <<std::endl;
     }

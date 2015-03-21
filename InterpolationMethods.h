@@ -15,16 +15,25 @@ typedef double (*fp)(double);
 
 // Newton
 double NewtonInterpCoeff(fp f, const mVector& x);
-
 std::function<double (double)> Newton(fp f, const mVector& x);
+
+// Lagrange
+std::function<double (double)> Lagrange(fp f, const mVector& x);
 
 // Linear
 std::function<double (double)> Linear(fp f, const mVector& x);
 
 // Hermite
 std::function<double (double)> Hermite(fp y, fp m, const mVector& x); // y: function value, m: derivative
+std::function<double (double)> Hermite(fp y, std::function<double (double)> m, const mVector& x); // y: function value, m: derivative
+
+// Spline ( Natural Boundary)
+std::function<double (double)> Spline(fp f, const mVector& x);
 
 // Construct Polynomial from Coeffs
 double PolynominalEval(const mVector& coeffs, double x);
+
+// Function yn at xn
+std::function<double (double)> CustomFunction(const mVector& y, const mVector& x);
 
 #endif /* defined(__NA_Homework_1__InterpolationMethods__) */
