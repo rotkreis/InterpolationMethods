@@ -152,12 +152,31 @@ std::function<double (double)> Hermite(fp y, std::function<double (double)> m, c
 
 // Spline
 std::function<double (double)> Spline(fp f, const mVector& x){
-    mVector c(x.dim());
+    int n = x.dim() - 1; // index from 0 to n, n + 1 points total
+    mVector c(n);
     c[0] = 1;
-    for (int i = 1; i != x.dim() - 1; i++) {
-        
+    for (int i = 1; i != c.dim(); i++) {
+        c[i] = (x[i] - x[i - 1]) / (x[i + 1] - x[i - 1]);
     }
-    std::function<double (double)> m = CustomFunction(x, x);
+    mVector a(n);
+    for (int i = 0; i != a.dim() - 1; i++) {
+        a[i] = 1 - c[i + 1];
+    }
+    a[n] = 1;
+    mVector b(n + 1);
+    for (int i = 0; i != b.dim(); i++) {
+        b[i] = 2.0;
+    }
+    mVector d(n + 1);
+    d[0] = 3 * (f(x[1]) - f(x[0])) / (x[1] - x[0]);
+    d[n] = 3 * (f(x[n]) - f(x[n - 1])) / (x[n] - x[n - 1]);
+    for (int i = 1; i != d.dim() - 1; i++) {
+        d[i] = 3 * (1 - c[i]) / (x[i] - x[i - 1]) * (f(x[i]) - f(x[i - 1]))
+             + 3 * c[i] / (x[i + 1] - x[i]) * (f(x[i + 1]) - f(x[i]));
+    }
+    mVector sol(n + 1);
+    TridiagonalSolve(a, b, c, d, sol);
+    std::function<double (double)> m = CustomFunction(sol, x);
     return Hermite(f, m, x);
 }
 

@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include "Matrix.h"
+#include "Tridiagonal.h"//;
 typedef double (*fp)(double);
 
 // Newton
@@ -24,10 +25,12 @@ std::function<double (double)> Lagrange(fp f, const mVector& x);
 std::function<double (double)> Linear(fp f, const mVector& x);
 
 // Hermite
-std::function<double (double)> Hermite(fp y, fp m, const mVector& x); // y: function value, m: derivative
-std::function<double (double)> Hermite(fp y, std::function<double (double)> m, const mVector& x); // y: function value, m: derivative
+std::function<double (double)> Hermite(fp y, fp m, const mVector& x); // y: function value, m: derivative, Second Order
 
-// Spline ( Natural Boundary)
+
+std::function<double (double)> Hermite(fp y, std::function<double (double)> m, const mVector& x);// for Spline
+
+// Spline ( Natural Boundary, Third Order)
 std::function<double (double)> Spline(fp f, const mVector& x);
 
 // Construct Polynomial from Coeffs

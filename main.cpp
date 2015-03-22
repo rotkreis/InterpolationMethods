@@ -9,12 +9,13 @@
 #include <iostream>
 #include <cmath>
 #include "InterpolationMethods.h"
+//#include "Tridiagonal.h"
 
 std::function<double (double)> retFun(double n) {
     return [n](double x) { return x - n; };
 }
 double quad(double x){
-    return 2 * x;
+    return x;
 }
 
 int main(int argc, const char * argv[])
@@ -30,15 +31,18 @@ int main(int argc, const char * argv[])
 
 // --------- --------- Problem 2.2  --------- ---------
 
-    mVector a(5);
-    a = {0.25,.5,1,2,3};
-//    std::function<double (double)> foo = Newton(quad, a);
-    std::function<double (double)> foo = Lagrange(sin, a);
+    mVector a(6);
+    a = {0, 1, 1.5, 2, 2.5 , 3};
+    std::function<double (double)> foo = Spline(quad, a);
     for (double i = 1; i <= 3; i += 0.5) {
         std::cout << foo(i) <<std::endl;
     }
     std::cout << foo(3.14 / 2) << std::endl;
     std::cout << foo(3.14 / 4) << std::endl;
+    
+
+    
+    
 //    std::function<double (double)> test = retFun(6);
 //    std::cout << test(2) << std::endl;
 //    std::cout << NewtonInterpCoeff(f, a);
