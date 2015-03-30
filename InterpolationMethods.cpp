@@ -154,15 +154,18 @@ std::function<double (double)> Hermite(fp y, std::function<double (double)> m, c
 std::function<double (double)> Spline(fp f, const mVector& x){
     int n = x.dim() - 1; // index from 0 to n, n + 1 points total
     mVector c(n);
+    for (int i = 0; i != x.dim() - 1; i++) {
+        assert(x[i] < x[i + 1]);
+    }
     c[0] = 1;
     for (int i = 1; i != c.dim(); i++) {
         c[i] = (x[i] - x[i - 1]) / (x[i + 1] - x[i - 1]);
     }
     mVector a(n);
-    for (int i = 0; i != a.dim() - 1; i++) {
+    for (int i = 0; i != n - 1; i++) {
         a[i] = 1 - c[i + 1];
     }
-    a[n] = 1;
+    a[n - 1] = 1;
     mVector b(n + 1);
     for (int i = 0; i != b.dim(); i++) {
         b[i] = 2.0;
@@ -170,13 +173,27 @@ std::function<double (double)> Spline(fp f, const mVector& x){
     mVector d(n + 1);
     d[0] = 3 * (f(x[1]) - f(x[0])) / (x[1] - x[0]);
     d[n] = 3 * (f(x[n]) - f(x[n - 1])) / (x[n] - x[n - 1]);
-    for (int i = 1; i != d.dim() - 1; i++) {
+    for (int i = 1; i != d.dim(); i++) {
         d[i] = 3 * (1 - c[i]) / (x[i] - x[i - 1]) * (f(x[i]) - f(x[i - 1]))
              + 3 * c[i] / (x[i + 1] - x[i]) * (f(x[i + 1]) - f(x[i]));
     }
     mVector sol(n + 1);
     TridiagonalSolve(a, b, c, d, sol);
-    std::function<double (double)> m = CustomFunction(sol, x);
+    Matrix test(n + 1, n + 1);
+    for(int i = 0; i != n + 1; i++){
+        test(i,i) = 2;
+    }
+    for (int i = 0; i != n; i++) {
+        test(i + 1, i) = a[i];
+    }
+    for (int i = 0; i != n; i++) {
+        test(i, i + 1) = c[i];
+    }
+    std::cout << test * sol - d;
+    
+    std::function<double (double)> m = CustomFunction(sol,x);
+//    std::cout << reslu.GetNumRows();
+//    std::cout << reslu.GetNumCols();
     return Hermite(f, m, x);
 }
 
@@ -191,10 +208,10 @@ double PolynominalEval(const mVector& coeffs, double x){
 
 // Function yn at xn
 std::function<double (double)> CustomFunction(const mVector& y, const mVector& x){
-    return [&](double t){
+    return [&,y](double t){
         for (int i = 0; i != x.dim(); i++) {
             if (t == x[i]) {
-                return x[i];
+                return y[i];
             }
         }
         return 0.0;
